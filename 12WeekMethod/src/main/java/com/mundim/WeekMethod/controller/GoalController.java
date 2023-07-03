@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+//TODO Criar goals view para mostrar datas corretamente
+
 @RestController
 @RequestMapping("/goals")
 @Api(tags = "goals")

@@ -1,13 +1,18 @@
 package com.mundim.WeekMethod.entity;
 
+import com.mundim.WeekMethod.dto.WeekCardDTO;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
 
 @Entity
 @Table(name = "week_card")
 @Data
+@NoArgsConstructor
 public class WeekCard {
 
     @Id
@@ -27,6 +32,9 @@ public class WeekCard {
     @Column(name = "week_end_date")
     private LocalDate weekEndDate;
 
+    @Column(name = "week_tasks_ids")
+    private HashSet<Long> weekTasksIds;
+
     @Column(name = "completed_tasks")
     private Integer completedTasks;
 
@@ -35,5 +43,16 @@ public class WeekCard {
 
     @Column(name = "notes")
     private String notes;
+
+    public WeekCard(WeekCardDTO dto){
+        this.userId = dto.userId();
+        this.description = dto.description();
+        this.weekStartDate = dto.weekStartDate();
+        this.weekEndDate = dto.weekEndDate();
+        this.weekTasksIds = dto.weekTasksIds();
+        this.completedTasks = 0;
+        this.pendingTasks = this.weekTasksIds.size();
+        this.notes = dto.notes();
+    }
 
 }
