@@ -17,13 +17,13 @@ public class UserService {
         return userRepository.save(new User(userDTO));
     }
 
-    public User getUserById(Long userId){
+    public User findUserById(Long userId){
         return userRepository.findById(userId)
                 .orElseThrow(() -> new BadRequestException("Usuário com id: " + userId + " não existe!"));
     }
 
     public User updateUserById(UserDTO userDTO, Long userId){
-        User user = getUserById(userId);
+        User user = findUserById(userId);
         if(userDTO.name() != null) user.setName(userDTO.name());
         if(userDTO.email() != null) user.setEmail(userDTO.email());
         if(userDTO.password() != null) user.setPassword(userDTO.password());
@@ -31,7 +31,7 @@ public class UserService {
     }
 
     public User deleteUserById(Long userId){
-        User user = getUserById(userId);
+        User user = findUserById(userId);
         userRepository.deleteById(userId);
         return user;
     }

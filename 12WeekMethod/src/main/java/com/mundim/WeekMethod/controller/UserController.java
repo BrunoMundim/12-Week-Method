@@ -34,7 +34,7 @@ public class UserController {
     @GetMapping("/find-id")
     @ApiOperation(value = "Find user by ID")
     public ResponseEntity<UserView> getUserById(@ApiParam(value = "User ID") @RequestParam Long userId) {
-        User user = userService.getUserById(userId);
+        User user = userService.findUserById(userId);
         return ResponseEntity
                 .ok(new UserView(user));
     }

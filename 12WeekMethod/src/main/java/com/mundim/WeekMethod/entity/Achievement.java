@@ -1,6 +1,8 @@
 package com.mundim.WeekMethod.entity;
 
+import com.mundim.WeekMethod.dto.AchievementDTO;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -8,6 +10,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "achievement")
 @Data
+@NoArgsConstructor
 public class Achievement {
 
     @Id
@@ -24,4 +27,9 @@ public class Achievement {
     @Column(name = "date_achieved")
     private LocalDate dateAchieved;
 
+    public Achievement(AchievementDTO dto) {
+        this.userId = dto.userId();
+        this.description = dto.description();
+        this.dateAchieved = dto.dateAchieved();
+    }
 }
