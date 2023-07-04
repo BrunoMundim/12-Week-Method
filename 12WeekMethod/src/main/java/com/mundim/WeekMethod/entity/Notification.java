@@ -1,6 +1,9 @@
 package com.mundim.WeekMethod.entity;
 
+import com.mundim.WeekMethod.dto.NotificationDTO;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.aspectj.weaver.ast.Not;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -8,7 +11,13 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "notification")
 @Data
+@NoArgsConstructor
 public class Notification {
+
+    public enum ReadStatus {
+        READED,
+        NOT_READED
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +37,14 @@ public class Notification {
     private LocalDate timeStamp;
 
     @Column(name = "read_status")
-    private String readStatus;
+    private ReadStatus readStatus;
+
+    public Notification(NotificationDTO dto){
+        this.userId = dto.userId();
+        this.title = dto.title();
+        this.message = dto.message();
+        this.timeStamp = LocalDate.now();
+        this.readStatus = ReadStatus.NOT_READED;
+    }
 
 }
