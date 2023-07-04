@@ -49,9 +49,9 @@ public class WeekCard {
         this.description = dto.description();
         this.weekStartDate = dto.weekStartDate();
         this.weekEndDate = dto.weekEndDate();
-        this.weekTasksIds = dto.weekTasksIds();
+        this.weekTasksIds = new HashSet<>();
         this.completedTasks = 0;
-        this.pendingTasks = this.weekTasksIds.size();
+        this.pendingTasks = 0;
         this.notes = dto.notes();
     }
 

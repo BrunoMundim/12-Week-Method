@@ -1,7 +1,6 @@
 package com.mundim.WeekMethod.dto;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 
 public record WeekCardDTO(
         Long userId,
@@ -9,7 +8,6 @@ public record WeekCardDTO(
         String description,
         LocalDate weekStartDate,
         LocalDate weekEndDate,
-        HashSet<Long> weekTasksIds,
         String notes
 ) {
 }

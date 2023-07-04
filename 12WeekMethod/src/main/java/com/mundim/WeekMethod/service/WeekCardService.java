@@ -32,7 +32,6 @@ public class WeekCardService {
         if(weekCardDTO.description() != null) weekCard.setDescription(weekCardDTO.description());
         if(weekCardDTO.weekStartDate() != null) weekCard.setWeekStartDate(weekCardDTO.weekStartDate());
         if(weekCardDTO.weekEndDate() != null) weekCard.setWeekEndDate(weekCardDTO.weekEndDate());
-        if(weekCardDTO.weekTasksIds() != null) weekCard.setWeekTasksIds(weekCardDTO.weekTasksIds());
         if(weekCardDTO.notes() != null) weekCard.setNotes(weekCardDTO.notes());
         return weekcardRepository.save(weekCard);
     }
@@ -41,6 +40,18 @@ public class WeekCardService {
         WeekCard weekCard = findWeekCardById(weekCardId);
         weekcardRepository.deleteById(weekCardId);
         return weekCard;
+    }
+
+    public WeekCard addTaskToWeekCard(Long taskId, Long weekCardId){
+        WeekCard weekCard = findWeekCardById(weekCardId);
+        weekCard.getWeekTasksIds().add(taskId);
+        return weekcardRepository.save(weekCard);
+    }
+
+    public WeekCard removeTaskFromWeekCard(Long taskId, Long weekCardId){
+        WeekCard weekCard = findWeekCardById(weekCardId);
+        weekCard.getWeekTasksIds().remove(taskId);
+        return weekcardRepository.save(weekCard);
     }
 
 }

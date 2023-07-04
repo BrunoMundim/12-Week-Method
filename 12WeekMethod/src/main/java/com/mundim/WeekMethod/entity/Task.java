@@ -1,5 +1,6 @@
 package com.mundim.WeekMethod.entity;
 
+import com.mundim.WeekMethod.dto.TaskDTO;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -10,13 +11,19 @@ import java.time.LocalDate;
 @Data
 public class Task {
 
+    public enum TaskStatus{
+        NOT_STARTED,
+        IN_PROGRESS,
+        COMPLETED
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "task_id")
     private Long id;
 
-    @Column(name = "goal_id")
-    private Long goalId;
+    @Column(name = "task_goal_id")
+    private Long weekCardId;
 
     @Column(name = "title")
     private String title;
@@ -28,6 +35,13 @@ public class Task {
     private LocalDate dueDate;
 
     @Column(name = "status")
-    private String status;
+    private TaskStatus status;
 
+    public Task(TaskDTO dto) {
+        this.weekCardId = dto.weekCardId();
+        this.title = dto.title();
+        this.description = dto.description();
+        this.dueDate = dto.dueDate();
+        this.status = TaskStatus.NOT_STARTED;
+    }
 }
