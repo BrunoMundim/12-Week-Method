@@ -4,27 +4,28 @@ import com.mundim.WeekMethod.dto.UserDTO;
 import com.mundim.WeekMethod.entity.User;
 import com.mundim.WeekMethod.exception.BadRequestException;
 import com.mundim.WeekMethod.repository.UserRepository;
+import com.mundim.WeekMethod.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    public UserService(UserRepository userRepository, @Lazy PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository,
+                       @Lazy PasswordEncoder passwordEncoder,
+                       AuthenticationService authenticationService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationService = authenticationService;
     }
 
     public User createUser(UserDTO userDTO) {
@@ -34,7 +35,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public List<User> findAllUsers(){
+    public List<User> findAllUsers() {
         return userRepository.findAll();
     }
 
@@ -51,7 +52,7 @@ public class UserService {
 
     public User updateUserById(UserDTO userDTO, Long userId) {
         User user = findUserById(userId);
-        verifyAuthentication(user);
+        authenticationService.verifyUserAuthentication(user);
         if (userDTO.name() != null) user.setName(userDTO.name());
         if (userDTO.email() != null) user.setEmail(userDTO.email());
         if (userDTO.password() != null) {
@@ -64,22 +65,13 @@ public class UserService {
     public User deleteUserById(Long userId) {
         try {
             User user = findUserById(userId);
-            verifyAuthentication(user);
+            authenticationService.verifyUserAuthentication(user);
             userRepository.deleteById(userId);
             return user;
-        } catch (BadRequestException e){
+        } catch (BadRequestException e) {
             throw new BadRequestException(e.getMessage());
         }
 
-    }
-
-    public void verifyAuthentication(User user) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ADMIN");
-        if(!currentPrincipalName.equals(user.getEmail())){
-            throw new BadRequestException("Não autorizado!");
-        }
     }
 
 }

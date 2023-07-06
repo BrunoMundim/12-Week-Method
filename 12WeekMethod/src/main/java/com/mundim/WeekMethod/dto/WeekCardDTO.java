@@ -1,13 +1,13 @@
 package com.mundim.WeekMethod.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public record WeekCardDTO(
-        Long userId,
-        String title,
-        String description,
-        LocalDate weekStartDate,
-        LocalDate weekEndDate,
-        String notes
+        @NotNull @Schema(defaultValue = "Description") String description,
+        @NotNull LocalDate weekStartDate,
+        @NotNull @Schema(defaultValue = "Notes") String notes
 ) {
 }

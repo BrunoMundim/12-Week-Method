@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 
 @Entity
 @Table(name = "week_card")
@@ -44,11 +43,11 @@ public class WeekCard {
     @Column(name = "notes")
     private String notes;
 
-    public WeekCard(WeekCardDTO dto){
-        this.userId = dto.userId();
+    public WeekCard(WeekCardDTO dto, Long userId){
+        this.userId = userId;
         this.description = dto.description();
         this.weekStartDate = dto.weekStartDate();
-        this.weekEndDate = dto.weekEndDate();
+        this.weekEndDate = weekStartDate.plusDays(7);
         this.weekTasksIds = new HashSet<>();
         this.completedTasks = 0;
         this.pendingTasks = 0;
