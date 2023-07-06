@@ -5,8 +5,7 @@ import com.mundim.WeekMethod.entity.Notification;
 import com.mundim.WeekMethod.exception.BadRequestException;
 import com.mundim.WeekMethod.service.NotificationService;
 import com.mundim.WeekMethod.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +13,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequestMapping("/notification")
-@Api(tags = "notifications")
+@SecurityRequirement(name = "jwt")
 public class NotificationController {
 
     private final NotificationService notificationService;
@@ -26,26 +25,22 @@ public class NotificationController {
     }
 
     @PostMapping
-    @ApiOperation("Create a notification")
     public ResponseEntity<Notification> createNotification(@RequestBody NotificationDTO dto){
         verifyDtoForCreateNotification(dto);
         return new ResponseEntity<Notification>(notificationService.createNotification(dto), CREATED);
     }
 
     @GetMapping
-    @ApiOperation("Find a notification by ID")
     public ResponseEntity<Notification> findNotificationById(@RequestParam Long id){
         return ResponseEntity.ok(notificationService.findNotificationById(id));
     }
 
     @PutMapping
-    @ApiOperation("Update a notification by ID")
     public ResponseEntity<Notification> updateNotificationById(@RequestParam Long id, @RequestBody NotificationDTO dto){
         return ResponseEntity.ok(notificationService.updateNotificationById(id, dto));
     }
 
     @DeleteMapping
-    @ApiOperation("Delete a notification by ID")
     public ResponseEntity<Notification> deleteNotificationById(@RequestParam Long id){
         return ResponseEntity.ok(notificationService.deleteNotificationById(id));
     }

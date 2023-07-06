@@ -31,7 +31,7 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	// Swagger
-	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 	// Security
 	implementation 'org.springframework.boot:spring-boot-starter-security:3.1.1'
 	// Thymeleaf
