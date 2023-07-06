@@ -30,9 +30,14 @@ dependencies {
 	// Lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-
 	// Swagger
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	// Security
+	implementation 'org.springframework.boot:spring-boot-starter-security:3.1.1'
+	// Thymeleaf
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.1.1.RELEASE'
+	// JJWT
+	implementation 'com.auth0:java-jwt:4.2.1'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

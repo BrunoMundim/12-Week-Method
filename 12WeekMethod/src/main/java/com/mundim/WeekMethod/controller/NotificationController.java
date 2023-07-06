@@ -14,7 +14,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequestMapping("/notification")
-@Api("notifications")
+@Api(tags = "notifications")
 public class NotificationController {
 
     private final NotificationService notificationService;
