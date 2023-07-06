@@ -35,16 +35,20 @@ public class User implements UserDetails {
     @Column(name = "registration_date")
     private LocalDate registrationDate;
 
+    @Column(name = "role")
+    private String role;
+
     public User(UserDTO userDTO){
         this.name = userDTO.name();
         this.email = userDTO.email();
         this.password = null;
         this.registrationDate = LocalDate.now();
+        this.role = "ROLE_USER";
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority(this.role));
     }
 
     @Override

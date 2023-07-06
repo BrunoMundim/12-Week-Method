@@ -10,6 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
 @SecurityRequirement(name = "jwt")
@@ -28,7 +32,20 @@ public class UserController {
                         HttpStatus.CREATED);
     }
 
+    @GetMapping("/find-all")
+    @RolesAllowed("ADMIN")
+    public ResponseEntity<List<UserView>> getAllUsers() {
+        List<User> users = userService.findAllUsers();
+        List<UserView> usersViews = new ArrayList<>();
+        for (User user : users) {
+            usersViews.add(new UserView(user));
+        }
+        return ResponseEntity
+                .ok(usersViews);
+    }
+
     @GetMapping("/find-id")
+    @RolesAllowed("ADMIN")
     public ResponseEntity<UserView> getUserById(@RequestParam Long userId) {
         User user = userService.findUserById(userId);
         return ResponseEntity
@@ -36,6 +53,7 @@ public class UserController {
     }
 
     @GetMapping("/find-email")
+    @RolesAllowed("ADMIN")
     public ResponseEntity<UserView> getUserById(@RequestParam String email) {
         User user = userService.findUserByEmail(email);
         return ResponseEntity

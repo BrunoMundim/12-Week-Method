@@ -1,8 +1,7 @@
 package com.mundim.WeekMethod.security;
 
-import com.mundim.WeekMethod.service.UserService;
+import com.mundim.WeekMethod.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -17,13 +16,13 @@ import java.io.IOException;
 @Component
 public class FilterToken extends OncePerRequestFilter {
 
-    private TokenService tokenService;
-    private UserService userService;
+    private final TokenService tokenService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public FilterToken(TokenService tokenService, UserService userService) {
+    public FilterToken(TokenService tokenService, UserRepository userRepository) {
         this.tokenService = tokenService;
-        this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -40,7 +39,12 @@ public class FilterToken extends OncePerRequestFilter {
             token = authorizationHeader.replace("Bearer ", "");
             var subject = this.tokenService.getSubject(token);
 
-            var usuario = this.userService.findUserByEmail(subject);
+            var usuario = this.userRepository.findUserByEmail(subject);
+
+            if (usuario == null) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired !");
+                return;
+            }
 
             var authentication = new UsernamePasswordAuthenticationToken(usuario,
                     null, usuario.getAuthorities());
