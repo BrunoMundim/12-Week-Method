@@ -2,6 +2,7 @@ package com.mundim.WeekMethod.entity;
 
 import com.mundim.WeekMethod.dto.TaskDTO;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "task")
 @Data
+@NoArgsConstructor
 public class Task {
 
     public enum TaskStatus{
@@ -22,7 +24,7 @@ public class Task {
     @Column(name = "task_id")
     private Long id;
 
-    @Column(name = "task_goal_id")
+    @Column(name = "task_week_card_id")
     private Long weekCardId;
 
     @Column(name = "title")

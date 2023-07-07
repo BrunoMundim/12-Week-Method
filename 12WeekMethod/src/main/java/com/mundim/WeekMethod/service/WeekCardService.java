@@ -81,7 +81,7 @@ public class WeekCardService {
         return weekcardRepository.save(weekCard);
     }
 
-    private void verifyUserAuthorizationForWeekCard(Long weekCardId) {
+    public void verifyUserAuthorizationForWeekCard(Long weekCardId) {
         User user = authenticationService.findUserByBearer();
         WeekCard weekCard = weekcardRepository.findById(weekCardId)
                 .orElseThrow(() -> new BadRequestException("Week Card not found"));
