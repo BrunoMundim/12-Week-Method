@@ -15,19 +15,10 @@ import java.util.List;
 @NoArgsConstructor
 public class Goal {
 
-    public enum StatusType{
-        IN_PROGRESS,
-        COMPLETED,
-        ON_HOLD,
+    public enum StatusType {
         NOT_STARTED,
-        DEFERRED
-    }
-
-    @Embeddable
-    @Data
-    public static class KeyResult {
-        private String description;
-        private Double targetPercentage;
+        IN_PROGRESS,
+        COMPLETED
     }
 
     @Id
@@ -50,26 +41,38 @@ public class Goal {
     @Column(name = "end_date")
     private LocalDate endDate;
 
+    @Column(name = "completion_date")
+    private LocalDate completionDate;
+
     @Column(name = "status")
     private StatusType status;
 
     @Column(name = "progress_percentage")
     private Double progressPercentage;
 
-    @ElementCollection
-    @CollectionTable(name = "goal_key_result", joinColumns = @JoinColumn(name = "goal_id"))
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "goal_id")
     private List<KeyResult> keyResults = new ArrayList<>();
 
-    public Goal(GoalDTO goalDTO){
-        this.userId = goalDTO.userId();
+    public Goal(GoalDTO goalDTO, Long userId) {
+        this.userId = userId;
         this.title = goalDTO.title();
         this.description = goalDTO.description();
-        this.startDate = goalDTO.startDate();
-        this.endDate = goalDTO.endDate();
-        if(goalDTO.status() == null)
-            this.status = StatusType.NOT_STARTED;
-        else this.status = goalDTO.status();
+        this.startDate = null;
+        this.endDate = null;
+        this.completionDate = null;
+        this.status = StatusType.NOT_STARTED;
         this.progressPercentage = 0.0;
+        for (int i = 0; i < goalDTO.keyResultsDescription().size(); i++) {
+            keyResults.add(new KeyResult(goalDTO.keyResultsDescription().get(i), this.id));
+        }
     }
 
+    public Double calculateProgressPercentage() {
+        double contCompleted = 0.0;
+        for (KeyResult keyResult : keyResults) {
+            if (keyResult.isCompleted()) contCompleted++;
+        }
+        return contCompleted / keyResults.size();
+    }
 }

@@ -3,6 +3,7 @@ package com.mundim.WeekMethod.controller;
 import com.mundim.WeekMethod.dto.LoginDTO;
 import com.mundim.WeekMethod.entity.User;
 import com.mundim.WeekMethod.security.TokenService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +30,7 @@ public class LoginController {
     }
 
     @PostMapping
+    @Operation(tags = "Login", summary = "Login")
     public String login(@RequestBody LoginDTO loginDTO) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.email(), loginDTO.password()));
