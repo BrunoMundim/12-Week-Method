@@ -62,16 +62,21 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User deleteUserById(Long userId) {
-        try {
-            User user = findUserById(userId);
-            authenticationService.verifyUserAuthentication(user);
-            userRepository.deleteById(userId);
-            return user;
-        } catch (BadRequestException e) {
-            throw new BadRequestException(e.getMessage());
-        }
+    public User updateLoggedUser(UserDTO userDTO){
+        User user = authenticationService.findUserByBearer();
+        return updateUserById(userDTO, user.getId());
+    }
 
+    public User deleteUserById(Long userId) {
+        User user = findUserById(userId);
+        authenticationService.verifyUserAuthentication(user);
+        userRepository.deleteById(userId);
+        return user;
+    }
+
+    public User deleteLoggedUser() {
+        User user = authenticationService.findUserByBearer();
+        return deleteUserById(user.getId());
     }
 
 }

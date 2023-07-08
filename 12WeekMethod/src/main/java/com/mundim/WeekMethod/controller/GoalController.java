@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//TODO Criar goals view para mostrar datas corretamente
-
 @RestController
 @RequestMapping("/goals")
 @SecurityRequirement(name = "jwt")
