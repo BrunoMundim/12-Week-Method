@@ -16,7 +16,10 @@ public class BaseErrorMessage {
     public static final BaseErrorMessage WEEK_CARD_NOT_FOUND_BY_ID = new BaseErrorMessage("weekCardNotFoundById");
     public static final BaseErrorMessage TASK_NOT_FOUND_BY_ID = new BaseErrorMessage("taskNotFoundById");
     public static final BaseErrorMessage GOAL_NOT_FOUND_BY_ID = new BaseErrorMessage("goalNotFoundById");
+    public static final BaseErrorMessage GOAL_NOT_IN_PROGRESS = new BaseErrorMessage("goalNotInProgress");
     public static final BaseErrorMessage KEY_RESULT_NOT_FOUND_BY_ID = new BaseErrorMessage("keyResultNotFoundById");
+    public static final BaseErrorMessage KEY_RESULT_NOT_EXISTS_IN_GOAL = new BaseErrorMessage("keyResultNotExistsInGoal");
+    public static final BaseErrorMessage EMAIL_INVALID_FORMAT = new BaseErrorMessage("invalidFormatEmail");
     public static final BaseErrorMessage UNAUTHORIZED_USER = new BaseErrorMessage("unauthorizedUser");
     public static final BaseErrorMessage NULL_FIELD = new BaseErrorMessage("nullField");
 

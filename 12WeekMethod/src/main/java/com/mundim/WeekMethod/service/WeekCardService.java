@@ -92,7 +92,7 @@ public class WeekCardService {
         return weekCardRepository.save(weekCard);
     }
 
-    public void removeTaskFromWeekCard(Long weekCardId, Long taskId) {
+    public void removeTaskFromWeekCard(Long taskId, Long weekCardId) {
         WeekCard weekCard = findWeekCardById(weekCardId);
         weekCard.getWeekTasksIds().remove(taskId);
         weekCardRepository.save(weekCard);
@@ -107,6 +107,9 @@ public class WeekCardService {
     public WeekCard deleteWeekCardById(Long weekCardId) {
         verifyUserAuthorizationForWeekCard(weekCardId);
         WeekCard weekCard = findWeekCardById(weekCardId);
+        for (Long taskId : weekCard.getWeekTasksIds()) {
+            taskService.deleteTaskById(taskId);
+        }
         weekCardRepository.deleteById(weekCardId);
         return weekCard;
     }

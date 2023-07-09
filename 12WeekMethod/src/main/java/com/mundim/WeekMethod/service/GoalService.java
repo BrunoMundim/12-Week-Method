@@ -28,18 +28,20 @@ public class GoalService {
     private final KeyResultRepository keyResultRepository;
     private final UserService userService;
     private final AuthenticationService authenticationService;
+    private final MailService mailService;
 
     @Autowired
     public GoalService(
             GoalRepository goalRepository,
             KeyResultRepository keyResultRepository,
             UserService userService,
-            AuthenticationService authenticationService
-    ) {
+            AuthenticationService authenticationService,
+            MailService mailService) {
         this.goalRepository = goalRepository;
         this.keyResultRepository = keyResultRepository;
         this.userService = userService;
         this.authenticationService = authenticationService;
+        this.mailService = mailService;
     }
 
     public Goal createGoalForLoggedUser(GoalDTO goalDTO) {
@@ -56,12 +58,12 @@ public class GoalService {
 
     public List<Goal> findGoalsFromLoggedUser() {
         User user = authenticationService.findUserByBearer();
-        return goalRepository.findGoalByUserId(user.getId());
+        return goalRepository.findGoalsByUserId(user.getId());
     }
 
     public List<Goal> findGoalsByUserId(Long userId) {
         verifyUserAuthorizationByUserId(userId);
-        return goalRepository.findGoalByUserId(userId);
+        return goalRepository.findGoalsByUserId(userId);
     }
 
     public Goal updateGoal(Long goalId, UpdateGoalDTO dto) {
@@ -82,6 +84,13 @@ public class GoalService {
         return goal;
     }
 
+    public void deleteAllGoalByUserId(Long userId){
+        List<Goal> goals = findGoalsByUserId(userId);
+        for(Goal goal:goals) {
+            goalRepository.delete(goal);
+        }
+    }
+
     public Goal inProgressGoal(Long goalId) {
         Goal goal = findGoalById(goalId);
         goal.setStatus(Goal.StatusType.IN_PROGRESS);
@@ -99,15 +108,25 @@ public class GoalService {
 
     public Goal completeKeyResult(Long goalId, Long keyResultId) {
         Goal goal = findGoalById(goalId);
+        verifyGoalContainsKeyResult(goalId, keyResultId);
+        verifyGoalInProgress(goalId);
         changeCompletionStatusKeyResult(keyResultId, true);
         goal.setProgressPercentage(goal.calculateProgressPercentage());
+
+        // Send email to congratulate key result
+        sendEmailKeyResult(goalId, keyResultId);
+
         return goalRepository.save(goal);
     }
 
     public Goal uncompleteKeyResult(Long goalId, Long keyResultId) {
         Goal goal = findGoalById(goalId);
+        verifyGoalContainsKeyResult(goalId, keyResultId);
+        verifyGoalInProgress(goalId);
+
         changeCompletionStatusKeyResult(keyResultId, false);
         goal.setProgressPercentage(goal.calculateProgressPercentage());
+
         return goalRepository.save(goal);
     }
 
@@ -117,12 +136,45 @@ public class GoalService {
         keyResultRepository.save(keyResult);
     }
 
-    private KeyResult findKeyResultById(Long keyResultId) {
+    public void sendEmailKeyResult(Long goalId, Long keyResultId) {
+        Goal goal = findGoalById(goalId);
+        KeyResult keyResult = findKeyResultById(keyResultId);
+        User user = userService.findUserById(goal.getUserId());
+        mailService.sendEmailWithTemplate(("Completed Key Result"), "CompletedKeyResult.html", keyResult);
+    }
+
+    public KeyResult findKeyResultById(Long keyResultId) {
         return keyResultRepository.findById(keyResultId)
                 .orElseThrow(() -> new BadRequestException(
                         KEY_RESULT_NOT_FOUND_BY_ID.params(keyResultId.toString()).getMessage())
                 );
     }
+
+    // Verifications
+
+    private void verifyDtoFields(GoalDTO dto) {
+        if (dto.title() == null) throw new NullFieldException(NULL_FIELD.params("'title'").getMessage());
+        if (dto.description() == null) throw new NullFieldException(NULL_FIELD.params("'description'").getMessage());
+        if (dto.keyResultsDescription() == null || dto.keyResultsDescription().size() < 1)
+            throw new NullFieldException(NULL_FIELD.params("'keyResultsDescription'").getMessage());
+    }
+
+    private void verifyGoalContainsKeyResult(Long goalId, Long keyResultId) {
+        Goal goal = findGoalById(goalId);
+        KeyResult keyResult = findKeyResultById(keyResultId);
+        if (!goal.getKeyResults().contains(keyResult))
+            throw new BadRequestException(
+                    KEY_RESULT_NOT_EXISTS_IN_GOAL.params(keyResultId.toString(), goalId.toString()).getMessage()
+            );
+    }
+
+    private void verifyGoalInProgress(Long goalId) {
+        Goal goal = findGoalById(goalId);
+        if(goal.getStatus() != Goal.StatusType.IN_PROGRESS)
+            throw new BadRequestException(GOAL_NOT_IN_PROGRESS.params(goalId.toString()).getMessage());
+    }
+
+    // Authorizations
 
     public void verifyUserAuthorizationForGoal(Long goalId) {
         Goal goal = goalRepository.findById(goalId)
@@ -138,13 +190,6 @@ public class GoalService {
                 && !user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
             throw new UnauthorizedRequestException(UNAUTHORIZED_USER.getMessage());
         }
-    }
-
-    private void verifyDtoFields(GoalDTO dto) {
-        if (dto.title() == null) throw new NullFieldException(NULL_FIELD.params("'title'").getMessage());
-        if (dto.description() == null) throw new NullFieldException(NULL_FIELD.params("'description'").getMessage());
-        if (dto.keyResultsDescription() == null || dto.keyResultsDescription().size() < 1)
-            throw new NullFieldException(NULL_FIELD.params("'keyResultsDescription'").getMessage());
     }
 
 }

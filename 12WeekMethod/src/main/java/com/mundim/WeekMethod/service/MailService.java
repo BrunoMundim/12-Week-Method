@@ -19,10 +19,10 @@ public class MailService {
 
     private final String senderEmail = "noreply.12weekmethod@gmail.com";
 
-    private JavaMailSender mailSender;
-    private TemplateEngine templateEngine;
-    private AuthenticationService authenticationService;
-    private MailRepository mailRepository;
+    private final JavaMailSender mailSender;
+    private final TemplateEngine templateEngine;
+    private final AuthenticationService authenticationService;
+    private final MailRepository mailRepository;
 
     @Autowired
     public MailService(JavaMailSender mailSender, TemplateEngine templateEngine, AuthenticationService authenticationService, MailRepository mailRepository) {

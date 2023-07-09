@@ -75,8 +75,6 @@ public class GoalController {
     @Operation(tags = "Goal Key Result", summary = "Complete a key result")
     public ResponseEntity<Goal> completeKeyResult(@RequestParam Long goalId, Long keyResultId) {
         Goal goal = goalService.completeKeyResult(goalId, keyResultId);
-        KeyResult keyResult = goalService.findKeyResultById(keyResultId);
-        mailService.sendEmailWithTemplate(("Completed Key Result"), "CompletedKeyResult.html", keyResult);
         return ResponseEntity.ok(goal);
     }
 
