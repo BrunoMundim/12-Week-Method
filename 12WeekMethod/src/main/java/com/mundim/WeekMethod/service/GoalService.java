@@ -89,6 +89,11 @@ public class GoalService {
         return goalRepository.save(goal);
     }
 
+    public KeyResult findKeyResultById(Long keyResultId) {
+       return keyResultRepository.findById(keyResultId)
+                .orElseThrow(() -> new BadRequestException("Key Result not found"));
+    }
+
     public Goal completeKeyResult(Long goalId, Long keyResultId) {
         Goal goal = findGoalById(goalId);
         changeCompletionStatusKeyResult(keyResultId, true);
@@ -104,8 +109,7 @@ public class GoalService {
     }
 
     private void changeCompletionStatusKeyResult(Long keyResultId, boolean status) {
-        KeyResult keyResult = keyResultRepository.findById(keyResultId)
-                .orElseThrow(() -> new BadRequestException("Key Result not found"));
+        KeyResult keyResult = findKeyResultById(keyResultId);
         keyResult.setCompleted(status);
         keyResultRepository.save(keyResult);
     }

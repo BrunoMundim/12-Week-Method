@@ -38,7 +38,13 @@ dependencies {
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.1.1.RELEASE'
 	// JJWT
 	implementation 'com.auth0:java-jwt:4.2.1'
+	// Mail sender
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// Thymeleaf
+	implementation 'org.thymeleaf:thymeleaf:3.1.1.RELEASE'
 
+	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

@@ -81,7 +81,7 @@ public class TaskService {
         return task;
     }
 
-    private void verifyUserAuthorizationForTask(Task task) {
+    public void verifyUserAuthorizationForTask(Task task) {
         weekCardService.verifyUserAuthorizationForWeekCard(task.getWeekCardId());
     }
 

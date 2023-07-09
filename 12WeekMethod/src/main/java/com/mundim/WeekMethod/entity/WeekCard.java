@@ -16,7 +16,7 @@ public class WeekCard {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "goal_id")
+    @Column(name = "week_card_id")
     private Long id;
 
     @Column(name = "user_id")

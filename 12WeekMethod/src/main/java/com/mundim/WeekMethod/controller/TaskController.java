@@ -3,6 +3,7 @@ package com.mundim.WeekMethod.controller;
 import com.mundim.WeekMethod.dto.TaskDTO;
 import com.mundim.WeekMethod.entity.Task;
 import com.mundim.WeekMethod.service.TaskService;
+import com.mundim.WeekMethod.service.MailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +19,11 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class TaskController {
 
     private final TaskService taskService;
+    private final MailService mailService;
 
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService, MailService mailService) {
         this.taskService = taskService;
+        this.mailService = mailService;
     }
 
     @PostMapping
@@ -60,7 +63,9 @@ public class TaskController {
     @Operation(tags = "Task", summary = "Change task status to completed")
     public ResponseEntity<Task> completeTask(
             @RequestParam Long taskId) {
-        return ResponseEntity.ok(taskService.completeTask(taskId));
+        Task task = taskService.completeTask(taskId);
+        mailService.sendEmailWithTemplate(("Completed Task: " + task.getTitle()), "CompletedTask.html", task);
+        return ResponseEntity.ok(task);
     }
 
     @DeleteMapping

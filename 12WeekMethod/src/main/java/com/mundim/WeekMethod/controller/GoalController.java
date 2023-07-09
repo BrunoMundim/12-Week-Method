@@ -3,7 +3,9 @@ package com.mundim.WeekMethod.controller;
 import com.mundim.WeekMethod.dto.GoalDTO;
 import com.mundim.WeekMethod.dto.update.UpdateGoalDTO;
 import com.mundim.WeekMethod.entity.Goal;
+import com.mundim.WeekMethod.entity.KeyResult;
 import com.mundim.WeekMethod.service.GoalService;
+import com.mundim.WeekMethod.service.MailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +21,12 @@ import java.util.List;
 public class GoalController {
 
     private final GoalService goalService;
+    private final MailService mailService;
 
     @Autowired
-    public GoalController(GoalService goalService) {
+    public GoalController(GoalService goalService, MailService mailService) {
         this.goalService = goalService;
+        this.mailService = mailService;
     }
 
     @PostMapping
@@ -70,7 +74,10 @@ public class GoalController {
     @PutMapping("/key-result/complete")
     @Operation(tags = "Goal Key Result", summary = "Complete a key result")
     public ResponseEntity<Goal> completeKeyResult(@RequestParam Long goalId, Long keyResultId) {
-        return ResponseEntity.ok(goalService.completeKeyResult(goalId, keyResultId));
+        Goal goal = goalService.completeKeyResult(goalId, keyResultId);
+        KeyResult keyResult = goalService.findKeyResultById(keyResultId);
+        mailService.sendEmailWithTemplate(("Completed Key Result"), "CompletedKeyResult.html", keyResult);
+        return ResponseEntity.ok(goal);
     }
 
     @PutMapping("/key-result/uncomplete")
