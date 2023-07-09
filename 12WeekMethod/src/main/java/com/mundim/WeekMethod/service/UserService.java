@@ -60,7 +60,7 @@ public class UserService {
     }
 
     public User findUserByEmail(String email) {
-        User user = userRepository.findUserByEmail(email);
+        User user = userRepository.findByEmail(email);
         if (user == null) throw new BadRequestException(USER_NOT_FOUND_BY_EMAIL.params(email).getMessage());
         return user;
     }

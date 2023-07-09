@@ -1,6 +1,8 @@
 package com.mundim.WeekMethod.entity;
 
 import com.mundim.WeekMethod.dto.TaskDTO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +13,8 @@ import java.time.LocalDate;
 @Table(name = "task")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Task {
 
     public enum TaskStatus{

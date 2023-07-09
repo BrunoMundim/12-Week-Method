@@ -1,6 +1,8 @@
 package com.mundim.WeekMethod.entity;
 
 import com.mundim.WeekMethod.dto.WeekCardDTO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +14,8 @@ import java.util.HashSet;
 @Table(name = "week_card")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class WeekCard {
 
     @Id

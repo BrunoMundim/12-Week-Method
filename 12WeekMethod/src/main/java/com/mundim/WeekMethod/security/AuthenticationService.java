@@ -22,7 +22,7 @@ public class AuthenticationService implements UserDetailsService{
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findUserByEmail(email);
+        return userRepository.findByEmail(email);
     }
 
     public void verifyUserAuthentication(User user) {
@@ -36,6 +36,6 @@ public class AuthenticationService implements UserDetailsService{
     public User findUserByBearer(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
-        return userRepository.findUserByEmail(currentPrincipalName);
+        return userRepository.findByEmail(currentPrincipalName);
     }
 }
