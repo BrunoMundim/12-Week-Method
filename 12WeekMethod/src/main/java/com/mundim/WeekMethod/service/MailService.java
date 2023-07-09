@@ -1,5 +1,7 @@
 package com.mundim.WeekMethod.service;
 
+import com.mundim.WeekMethod.entity.Mail;
+import com.mundim.WeekMethod.repository.MailRepository;
 import com.mundim.WeekMethod.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -17,21 +19,26 @@ public class MailService {
 
     private final String senderEmail = "noreply.12weekmethod@gmail.com";
 
-    @Autowired
     private JavaMailSender mailSender;
-
-    @Autowired
     private TemplateEngine templateEngine;
+    private AuthenticationService authenticationService;
+    private MailRepository mailRepository;
 
     @Autowired
-    private AuthenticationService authenticationService;
+    public MailService(JavaMailSender mailSender, TemplateEngine templateEngine, AuthenticationService authenticationService, MailRepository mailRepository) {
+        this.mailSender = mailSender;
+        this.templateEngine = templateEngine;
+        this.authenticationService = authenticationService;
+        this.mailRepository = mailRepository;
+    }
 
-    public String sendEmailWithTemplate(String subject, String templateName, Object data) {
+    public void sendEmailWithTemplate(String subject, String templateName, Object data) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setSubject(subject);
-            helper.setTo(authenticationService.findUserByBearer().getEmail());
+            String to = authenticationService.findUserByBearer().getEmail();
+            helper.setTo(to);
 
             Context context = new Context();
             context.setVariable("data", data);
@@ -42,15 +49,19 @@ public class MailService {
             addInlineImage(helper);
 
             mailSender.send(message);
-            return htmlContent;
+            saveMailInDatabase(to, subject, htmlContent);
         } catch (MessagingException e) {
             e.printStackTrace();
-            return null;
         }
     }
 
     private void addInlineImage(MimeMessageHelper helper) throws MessagingException {
         ClassPathResource imageResource = new ClassPathResource("templates/images/logo.png");
         helper.addInline("logoImage", imageResource);
+    }
+
+    private void saveMailInDatabase(String to, String subject, String message) {
+        Mail mail = new Mail(senderEmail, to, subject, message);
+        mailRepository.save(mail);
     }
 }

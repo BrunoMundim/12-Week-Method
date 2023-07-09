@@ -64,7 +64,7 @@ public class Goal {
         this.status = StatusType.NOT_STARTED;
         this.progressPercentage = 0.0;
         for (int i = 0; i < goalDTO.keyResultsDescription().size(); i++) {
-            keyResults.add(new KeyResult(goalDTO.keyResultsDescription().get(i), this.id));
+            keyResults.add(new KeyResult(goalDTO.keyResultsDescription().get(i)));
         }
     }
 

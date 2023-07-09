@@ -19,8 +19,8 @@ public class WeekCard {
     @Column(name = "week_card_id")
     private Long id;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "goal_id")
+    private Long goalId;
 
     @Column(name = "description")
     private String description;
@@ -34,23 +34,15 @@ public class WeekCard {
     @Column(name = "week_tasks_ids")
     private HashSet<Long> weekTasksIds;
 
-    @Column(name = "completed_tasks")
-    private Integer completedTasks;
-
-    @Column(name = "pending_tasks")
-    private Integer pendingTasks;
-
     @Column(name = "notes")
     private String notes;
 
-    public WeekCard(WeekCardDTO dto, Long userId){
-        this.userId = userId;
+    public WeekCard(WeekCardDTO dto){
+        this.goalId = dto.goalId();
         this.description = dto.description();
         this.weekStartDate = dto.weekStartDate();
         this.weekEndDate = weekStartDate.plusDays(7);
         this.weekTasksIds = new HashSet<>();
-        this.completedTasks = 0;
-        this.pendingTasks = 0;
         this.notes = dto.notes();
     }
 

@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
-    public List<Task> findTaskByWeekCardId(Long weekCardId);
+    public List<Task> findTasksByWeekCardId(Long weekCardId);
 
 }

@@ -20,7 +20,7 @@ public class KeyResult {
 
     private boolean completed;
 
-    public KeyResult(String description, Long goalId) {
+    public KeyResult(String description) {
         this.description = description;
         this.completed = false;
     }

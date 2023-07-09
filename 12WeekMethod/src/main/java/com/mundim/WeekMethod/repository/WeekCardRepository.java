@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface WeekCardRepository extends JpaRepository<WeekCard, Long> {
 
-    public List<WeekCard> findWeekCardByUserId(Long userId);
+    public List<WeekCard> findWeekCardsByGoalId(Long goalId);
 
 }

@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import static com.mundim.WeekMethod.exception.config.BaseErrorMessage.UNAUTHORIZED_USER;
+
 @Service
 public class AuthenticationService implements UserDetailsService{
 
@@ -24,11 +26,10 @@ public class AuthenticationService implements UserDetailsService{
     }
 
     public void verifyUserAuthentication(User user) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        if(!authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))
-                && !currentPrincipalName.equals(user.getEmail())){
-            throw new UnauthorizedRequestException("Unauthorized User");
+        User loggedUser = findUserByBearer();
+        if(!loggedUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))
+                && !loggedUser.equals(user)){
+            throw new UnauthorizedRequestException(UNAUTHORIZED_USER.getMessage());
         }
     }
 
