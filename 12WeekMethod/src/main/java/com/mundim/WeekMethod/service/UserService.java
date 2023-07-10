@@ -19,6 +19,8 @@ import static com.mundim.WeekMethod.exception.config.BaseErrorMessage.*;
 @Service
 public class UserService {
 
+    private static final String emailExpectedFormat = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationService authenticationService;
@@ -39,19 +41,19 @@ public class UserService {
         this.goalService = goalService;
     }
 
-    public User createUser(UserDTO userDTO) {
+    public User create(UserDTO userDTO) {
         verifyDto(userDTO);
         User user = new User(userDTO);
         user.setPassword(passwordEncoder.encode(userDTO.password()));
-        userRepository.save(user);
+        user = userRepository.save(user);
         return user;
     }
 
-    public List<User> findAllUsers() {
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 
-    public User findUserById(Long userId) {
+    public User findById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new BadRequestException(
                         USER_NOT_FOUND_BY_ID
@@ -59,14 +61,14 @@ public class UserService {
                                 .getMessage()));
     }
 
-    public User findUserByEmail(String email) {
+    public User findByEmail(String email) {
         User user = userRepository.findByEmail(email);
         if (user == null) throw new BadRequestException(USER_NOT_FOUND_BY_EMAIL.params(email).getMessage());
         return user;
     }
 
-    public User updateUserById(UserDTO userDTO, Long userId) {
-        User user = findUserById(userId);
+    public User updateById(Long userId, UserDTO userDTO) {
+        User user = findById(userId);
         authenticationService.verifyUserAuthentication(user);
         if (userDTO.name() != null) user.setName(userDTO.name());
         if (userDTO.email() != null) user.setEmail(userDTO.email());
@@ -79,12 +81,12 @@ public class UserService {
 
     public User updateLoggedUser(UserDTO userDTO){
         User user = authenticationService.findUserByBearer();
-        findUserById(user.getId()); // Verify if user is valid
-        return updateUserById(userDTO, user.getId());
+        findById(user.getId()); // Verify if user is valid
+        return updateById(user.getId(), userDTO);
     }
 
-    public User deleteUserById(Long userId) {
-        User user = findUserById(userId);
+    public User deleteById(Long userId) {
+        User user = findById(userId);
         authenticationService.verifyUserAuthentication(user);
         weekCardService.deleteAllWeekCardByUserId(userId);
         goalService.deleteAllGoalByUserId(userId);
@@ -94,14 +96,14 @@ public class UserService {
 
     public User deleteLoggedUser() {
         User user = authenticationService.findUserByBearer();
-        return deleteUserById(user.getId());
+        return deleteById(user.getId());
     }
 
     private void verifyDto(UserDTO dto) {
         if(dto.name() == null) throw new NullFieldException(NULL_FIELD.params("'name'").getMessage());
         if(dto.email() == null) throw new NullFieldException(NULL_FIELD.params("'email'").getMessage());
         if(dto.password() == null) throw new NullFieldException(NULL_FIELD.params("'password'").getMessage());
-        if(!Pattern.compile("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$").matcher(dto.email()).matches())
+        if(!Pattern.compile(emailExpectedFormat).matcher(dto.email()).matches())
             throw new BadRequestException(EMAIL_INVALID_FORMAT.getMessage());
     }
 

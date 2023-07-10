@@ -25,12 +25,13 @@ public class AuthenticationService implements UserDetailsService{
         return userRepository.findByEmail(email);
     }
 
-    public void verifyUserAuthentication(User user) {
+    public boolean verifyUserAuthentication(User user) {
         User loggedUser = findUserByBearer();
         if(!loggedUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))
                 && !loggedUser.equals(user)){
             throw new UnauthorizedRequestException(UNAUTHORIZED_USER.getMessage());
         }
+        return true;
     }
 
     public User findUserByBearer(){

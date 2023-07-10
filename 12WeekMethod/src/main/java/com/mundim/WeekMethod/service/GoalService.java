@@ -139,7 +139,7 @@ public class GoalService {
     public void sendEmailKeyResult(Long goalId, Long keyResultId) {
         Goal goal = findGoalById(goalId);
         KeyResult keyResult = findKeyResultById(keyResultId);
-        User user = userService.findUserById(goal.getUserId());
+        User user = userService.findById(goal.getUserId());
         mailService.sendEmailWithTemplate(("Completed Key Result"), "CompletedKeyResult.html", keyResult);
     }
 

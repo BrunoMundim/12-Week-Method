@@ -7,7 +7,6 @@ import com.mundim.WeekMethod.view.UserView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Role;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +30,7 @@ public class UserController {
     @Operation(tags = "User", summary = "Create a user")
     public ResponseEntity<User> createUser(@RequestBody UserDTO userDTO) {
         return new ResponseEntity<User> (
-                        userService.createUser(userDTO),
+                        userService.create(userDTO),
                         HttpStatus.CREATED);
     }
 
@@ -39,7 +38,7 @@ public class UserController {
     @RolesAllowed("ADMIN")
     @Operation(tags = "User", summary = "Find all users (ADMIN ONLY)")
     public ResponseEntity<List<UserView>> getAllUsers() {
-        List<User> users = userService.findAllUsers();
+        List<User> users = userService.findAll();
         List<UserView> usersViews = new ArrayList<>();
         for (User user : users) {
             usersViews.add(new UserView(user));
@@ -52,7 +51,7 @@ public class UserController {
     @RolesAllowed("ADMIN")
     @Operation(tags = "User", summary = "Find user by id (ADMIN ONLY)")
     public ResponseEntity<UserView> getUserById(@RequestParam Long userId) {
-        User user = userService.findUserById(userId);
+        User user = userService.findById(userId);
         return ResponseEntity
                 .ok(new UserView(user));
     }
@@ -61,7 +60,7 @@ public class UserController {
     @RolesAllowed("ADMIN")
     @Operation(tags = "User", summary = "Find user by email (ADMIN ONLY)")
     public ResponseEntity<UserView> getUserByEmail(@RequestParam String email) {
-        User user = userService.findUserByEmail(email);
+        User user = userService.findByEmail(email);
         return ResponseEntity
                 .ok(new UserView(user));
     }
@@ -78,7 +77,7 @@ public class UserController {
     @RolesAllowed("ADMIN")
     @Operation(tags = "User", summary = "Update user by id (ADMIN ONLY)")
     public ResponseEntity<UserView> updatetUserById(@RequestParam Long userId, @RequestBody UserDTO userDTO) {
-        User user = userService.updateUserById(userDTO, userId);
+        User user = userService.updateById(userId, userDTO);
         return ResponseEntity
                 .ok(new UserView(user));
     }
@@ -95,7 +94,7 @@ public class UserController {
     @RolesAllowed("ADMIN")
     @Operation(tags = "User", summary = "Delete user by id (ADMIN ONLY)")
     public ResponseEntity<UserView> deleteUserById(@RequestParam Long userId) {
-        User user = userService.deleteUserById(userId);
+        User user = userService.deleteById(userId);
         return ResponseEntity
                 .ok(new UserView(user));
     }
