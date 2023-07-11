@@ -39,41 +39,41 @@ public class WeekCardService {
         this.taskService = taskService;
     }
 
-    public WeekCard createWeekCardForLoggedUser(WeekCardDTO weekCardDTO) {
+    public WeekCard createForLoggedUser(WeekCardDTO weekCardDTO) {
         goalService.verifyUserAuthorizationForGoal(weekCardDTO.goalId());
         verifyDtoNullFields(weekCardDTO);
         return weekCardRepository.save(new WeekCard(weekCardDTO));
     }
 
-    public List<WeekCard> findWeekCardsByGoalId(Long goalId) {
-        Goal goal = goalService.findById(goalId); // Verify authorization
+    public List<WeekCard> findByGoalId(Long goalId) {
+        goalService.verifyUserAuthorizationForGoal(goalId);
         return weekCardRepository.findWeekCardsByGoalId(goalId);
     }
 
-    public List<WeekCard> findWeekCardsForLoggedUser() {
+    public List<WeekCard> findByUserId(Long userId) {
+        List<Goal> goals = goalService.findByUserId(userId);
+        List<WeekCard> weekCards = new ArrayList<>();
+        for(Goal goal:goals)
+            weekCards.addAll(findByGoalId(goal.getId()));
+        return weekCards;
+    }
+
+    public List<WeekCard> findForLoggedUser() {
         Long userId = authenticationService.findUserByBearer().getId();
         List<Goal> goals = goalService.findByUserId(userId);
         List<WeekCard> weekCards = new ArrayList<>();
         for(Goal goal:goals)
-            weekCards.addAll(findWeekCardsByGoalId(goal.getId()));
+            weekCards.addAll(findByGoalId(goal.getId()));
         return weekCards;
     }
 
-    public List<WeekCard> findWeekCardsByUserId(Long userId) {
-        List<Goal> goals = goalService.findByUserId(userId);
-        List<WeekCard> weekCards = new ArrayList<>();
-        for(Goal goal:goals)
-            weekCards.addAll(findWeekCardsByGoalId(goal.getId()));
-        return weekCards;
-    }
-
-    public WeekCard findWeekCardById(Long weekCardId) {
+    public WeekCard findById(Long weekCardId) {
         verifyUserAuthorizationForWeekCard(weekCardId);
         return findWeekCard(weekCardId);
     }
 
-    public WeekCard updateWeekCardById(UpdateWeekCardDTO dto, Long weekCardId) {
-        WeekCard weekCard = findWeekCardById(weekCardId);
+    public WeekCard updateById(UpdateWeekCardDTO dto, Long weekCardId) {
+        WeekCard weekCard = findById(weekCardId);
         verifyUserAuthorizationForWeekCard(weekCardId);
 
         if (dto.goalId() != null) {
@@ -90,21 +90,21 @@ public class WeekCardService {
         return weekCardRepository.save(weekCard);
     }
 
-    public void removeTaskFromWeekCard(Long taskId, Long weekCardId) {
-        WeekCard weekCard = findWeekCardById(weekCardId);
+    public void removeTask(Long taskId, Long weekCardId) {
+        WeekCard weekCard = findById(weekCardId);
         weekCard.getWeekTasksIds().remove(taskId);
         weekCardRepository.save(weekCard);
     }
 
-    public void addTaskToWeekCard(Long taskId, Long weekCardId) {
-        WeekCard weekCard = findWeekCardById(weekCardId);
+    public void addTask(Long taskId, Long weekCardId) {
+        WeekCard weekCard = findById(weekCardId);
         weekCard.getWeekTasksIds().add(taskId);
         weekCardRepository.save(weekCard);
     }
 
-    public WeekCard deleteWeekCardById(Long weekCardId) {
+    public WeekCard deleteById(Long weekCardId) {
         verifyUserAuthorizationForWeekCard(weekCardId);
-        WeekCard weekCard = findWeekCardById(weekCardId);
+        WeekCard weekCard = findById(weekCardId);
         for (Long taskId : weekCard.getWeekTasksIds()) {
             taskService.deleteTaskById(taskId);
         }
@@ -112,14 +112,15 @@ public class WeekCardService {
         return weekCard;
     }
 
-    public void deleteAllWeekCardByUserId(Long userId) {
-        List<WeekCard> weekCards = findWeekCardsByUserId(userId);
+    public List<WeekCard> deleteAllByUserId(Long userId) {
+        List<WeekCard> weekCards = findByUserId(userId);
         for (WeekCard weekCard : weekCards) {
             for (Long taskId : weekCard.getWeekTasksIds()) {
                 taskService.deleteTaskById(taskId);
             }
             weekCardRepository.delete(weekCard);
         }
+        return weekCards;
     }
 
     public void verifyUserAuthorizationForWeekCard(Long weekCardId) {
@@ -135,6 +136,7 @@ public class WeekCardService {
     }
 
     private void verifyDtoNullFields(WeekCardDTO dto) {
+        if (dto.goalId() == null) throw new NullFieldException(NULL_FIELD.params("'goalId'").getMessage());
         if (dto.description() == null) throw new NullFieldException(NULL_FIELD.params("'description'").getMessage());
         if (dto.notes() == null) throw new NullFieldException(NULL_FIELD.params("'notes'").getMessage());
         if (dto.weekStartDate() == null)

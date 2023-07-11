@@ -6,7 +6,6 @@ import com.mundim.WeekMethod.entity.WeekCard;
 import com.mundim.WeekMethod.exception.BadRequestException;
 import com.mundim.WeekMethod.repository.TaskRepository;
 import com.mundim.WeekMethod.repository.WeekCardRepository;
-import com.mundim.WeekMethod.security.AuthenticationService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,8 +52,8 @@ public class TaskService {
     public Task updateTaskById(Long taskId, TaskDTO taskDTO) {
         Task task = findTaskById(taskId);
         if (taskDTO.weekCardId() != null) {
-            weekCardService.addTaskToWeekCard(taskId, taskDTO.weekCardId());
-            weekCardService.removeTaskFromWeekCard(taskId, task.getWeekCardId());
+            weekCardService.addTask(taskId, taskDTO.weekCardId());
+            weekCardService.removeTask(taskId, task.getWeekCardId());
             task.setWeekCardId(taskDTO.weekCardId());
         }
         if (taskDTO.title() != null) task.setTitle(taskDTO.title());
@@ -77,7 +76,7 @@ public class TaskService {
 
     public Task deleteTaskById(Long taskId) {
         Task task = findTaskById(taskId);
-        weekCardService.removeTaskFromWeekCard(taskId, task.getWeekCardId());
+        weekCardService.removeTask(taskId, task.getWeekCardId());
         taskRepository.deleteById(taskId);
         return task;
     }
@@ -87,7 +86,7 @@ public class TaskService {
     }
 
     private void addTaskToWeekCard(Long weekCardId, Long taskId) {
-        WeekCard weekCard = weekCardService.findWeekCardById(weekCardId);
+        WeekCard weekCard = weekCardService.findById(weekCardId);
         weekCard.getWeekTasksIds().add(taskId);
         weekCardRepository.save(weekCard);
     }

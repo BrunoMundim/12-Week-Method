@@ -88,7 +88,7 @@ public class UserService {
     public User deleteById(Long userId) {
         User user = findById(userId);
         authenticationService.verifyUserAuthentication(user);
-        weekCardService.deleteAllWeekCardByUserId(userId);
+        weekCardService.deleteAllByUserId(userId);
         goalService.deleteByUserId(userId);
         userRepository.deleteById(userId);
         return user;
