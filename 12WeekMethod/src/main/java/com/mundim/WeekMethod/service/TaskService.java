@@ -2,14 +2,14 @@ package com.mundim.WeekMethod.service;
 
 import com.mundim.WeekMethod.dto.TaskDTO;
 import com.mundim.WeekMethod.entity.Task;
-import com.mundim.WeekMethod.entity.WeekCard;
 import com.mundim.WeekMethod.exception.BadRequestException;
+import com.mundim.WeekMethod.exception.NullFieldException;
 import com.mundim.WeekMethod.repository.TaskRepository;
-import com.mundim.WeekMethod.repository.WeekCardRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.mundim.WeekMethod.exception.config.BaseErrorMessage.NULL_FIELD;
 import static com.mundim.WeekMethod.exception.config.BaseErrorMessage.TASK_NOT_FOUND_BY_ID;
 
 @Service
@@ -17,40 +17,38 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final WeekCardService weekCardService;
-    private final WeekCardRepository weekCardRepository;
 
     public TaskService(
             TaskRepository taskRepository,
-            WeekCardService weekCardService,
-            WeekCardRepository weekCardRepository
+            WeekCardService weekCardService
     ) {
         this.taskRepository = taskRepository;
         this.weekCardService = weekCardService;
-        this.weekCardRepository = weekCardRepository;
     }
 
-    public Task createTask(TaskDTO taskDTO) {
+    public Task create(TaskDTO taskDTO) {
+        verifyDtoNullFields(taskDTO);
         weekCardService.verifyUserAuthorizationForWeekCard(taskDTO.weekCardId());
         Task task = new Task(taskDTO);
         task = taskRepository.save(task);
-        addTaskToWeekCard(taskDTO.weekCardId(), task.getId());
+        weekCardService.addTask(task.getId(), task.getWeekCardId());
         return task;
     }
 
-    public Task findTaskById(Long taskId) {
+    public Task findById(Long taskId) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new BadRequestException(TASK_NOT_FOUND_BY_ID.params(taskId.toString()).getMessage()));
         verifyUserAuthorizationForTask(task);
         return task;
     }
 
-    public List<Task> findTasksByWeekCardId (Long weekCardId) {
+    public List<Task> findByWeekCardId(Long weekCardId) {
         weekCardService.verifyUserAuthorizationForWeekCard(weekCardId);
         return taskRepository.findTasksByWeekCardId(weekCardId);
     }
 
     public Task updateTaskById(Long taskId, TaskDTO taskDTO) {
-        Task task = findTaskById(taskId);
+        Task task = findById(taskId);
         if (taskDTO.weekCardId() != null) {
             weekCardService.addTask(taskId, taskDTO.weekCardId());
             weekCardService.removeTask(taskId, task.getWeekCardId());
@@ -62,20 +60,20 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public Task inProgressTask(Long taskId) {
-        Task task = findTaskById(taskId);
+    public Task inProgress(Long taskId) {
+        Task task = findById(taskId);
         task.setStatus(Task.TaskStatus.IN_PROGRESS);
         return taskRepository.save(task);
     }
 
-    public Task completeTask(Long taskId) {
-        Task task = findTaskById(taskId);
+    public Task complete(Long taskId) {
+        Task task = findById(taskId);
         task.setStatus(Task.TaskStatus.COMPLETED);
         return taskRepository.save(task);
     }
 
-    public Task deleteTaskById(Long taskId) {
-        Task task = findTaskById(taskId);
+    public Task deleteById(Long taskId) {
+        Task task = findById(taskId);
         weekCardService.removeTask(taskId, task.getWeekCardId());
         taskRepository.deleteById(taskId);
         return task;
@@ -85,10 +83,14 @@ public class TaskService {
         weekCardService.verifyUserAuthorizationForWeekCard(task.getWeekCardId());
     }
 
-    private void addTaskToWeekCard(Long weekCardId, Long taskId) {
-        WeekCard weekCard = weekCardService.findById(weekCardId);
-        weekCard.getWeekTasksIds().add(taskId);
-        weekCardRepository.save(weekCard);
+    private void verifyDtoNullFields(TaskDTO dto) {
+        weekCardService.findById(dto.weekCardId());
+        if(dto.weekCardId() == null)
+            throw new NullFieldException(NULL_FIELD.params("'weekCardId'").getMessage());
+        if(dto.title() == null)
+            throw new NullFieldException(NULL_FIELD.params("'title'").getMessage());
+        if(dto.description() == null)
+            throw new NullFieldException(NULL_FIELD.params("'description'").getMessage());
     }
 
 }

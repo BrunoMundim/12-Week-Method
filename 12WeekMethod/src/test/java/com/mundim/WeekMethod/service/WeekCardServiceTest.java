@@ -32,15 +32,11 @@ public class WeekCardServiceTest {
 
     private static User user;
     private static Goal goal;
-    private static KeyResult keyResult1;
-    private static KeyResult keyResult2;
-    private static User unauthorizedUser;
     private static WeekCard weekCard;
     private static WeekCardDTO weekCardDTO;
     private static final Long userId = 1L;
     private static final Long goalId = 1L;
     private static final String userEmail = "email@email.com";
-    private static final String unauthorizedUserEmail = "unauthorizedemail@email.com";
     private static final String validPassword = "$2a$10$ha6Kj9Q0phOCb6E7ZHWV0.6C9LMSCXMI3URivZT3B6NWPPAOPWHZe";
 
     @Mock
@@ -61,10 +57,10 @@ public class WeekCardServiceTest {
                 .id(userId).name("name").email(userEmail).password(validPassword)
                 .registrationDate(LocalDate.now()).role("ROLE_USER").build();
         List<String> keyResults = Arrays.asList("Key Result 1", "Key Result 2");
-        keyResult1 = KeyResult.builder()
+        KeyResult keyResult1 = KeyResult.builder()
                 .id(1L).completed(false).description("Key Result 1")
                 .build();
-        keyResult2 = KeyResult.builder()
+        KeyResult keyResult2 = KeyResult.builder()
                 .id(2L).completed(false).description("Key Result 1")
                 .build();
         goal = Goal.builder()
@@ -73,10 +69,6 @@ public class WeekCardServiceTest {
                 .status(NOT_STARTED).progressPercentage(0.0)
                 .keyResults(Arrays.asList(keyResult1, keyResult2))
                 .build();
-        unauthorizedUser = User.builder()
-                .id(2L).name("name").email(unauthorizedUserEmail).password(validPassword)
-                .registrationDate(LocalDate.now()).role("ROLE_USER").build();
-
         weekCard = WeekCard.builder()
                 .id(1L).goalId(goal.getId()).description("description")
                 .weekStartDate(LocalDate.now()).weekEndDate(LocalDate.now().plusDays(7))

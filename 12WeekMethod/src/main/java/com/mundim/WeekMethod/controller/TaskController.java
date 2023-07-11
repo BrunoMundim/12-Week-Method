@@ -29,19 +29,19 @@ public class TaskController {
     @PostMapping
     @Operation(tags = "Task", summary = "Create a task")
     public ResponseEntity<Task> createTask(@RequestBody TaskDTO taskDTO) {
-        return new ResponseEntity<Task>(taskService.createTask(taskDTO), CREATED);
+        return new ResponseEntity<Task>(taskService.create(taskDTO), CREATED);
     }
 
     @GetMapping
     @Operation(tags = "Task", summary = "Find a task by ID")
     public ResponseEntity<Task> findTaskById(@RequestParam Long taskId) {
-        return ResponseEntity.ok(taskService.findTaskById(taskId));
+        return ResponseEntity.ok(taskService.findById(taskId));
     }
 
     @GetMapping("/weekcard-tasks")
     @Operation(tags = "Task", summary = "Find tasks by Week Card ID")
     public ResponseEntity<List<Task>> findTasksByWeekCardId(@RequestParam Long weekCardId) {
-        return ResponseEntity.ok(taskService.findTasksByWeekCardId(weekCardId));
+        return ResponseEntity.ok(taskService.findByWeekCardId(weekCardId));
     }
 
     @PutMapping
@@ -56,14 +56,14 @@ public class TaskController {
     @Operation(tags = "Task", summary = "Change task status to in progress")
     public ResponseEntity<Task> inProgressTask(
             @RequestParam Long taskId) {
-        return ResponseEntity.ok(taskService.inProgressTask(taskId));
+        return ResponseEntity.ok(taskService.inProgress(taskId));
     }
 
     @PutMapping("/complete-task")
     @Operation(tags = "Task", summary = "Change task status to completed")
     public ResponseEntity<Task> completeTask(
             @RequestParam Long taskId) {
-        Task task = taskService.completeTask(taskId);
+        Task task = taskService.complete(taskId);
         mailService.sendEmailWithTemplate(("Completed Task: " + task.getTitle()), "CompletedTask.html", task);
         return ResponseEntity.ok(task);
     }
@@ -72,7 +72,7 @@ public class TaskController {
     @Operation(tags = "Task", summary = "Delete a task")
     public ResponseEntity<Task> deleteTaskById(
             @RequestParam Long taskId) {
-        return ResponseEntity.ok(taskService.deleteTaskById(taskId));
+        return ResponseEntity.ok(taskService.deleteById(taskId));
     }
 
 }

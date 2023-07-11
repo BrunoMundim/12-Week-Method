@@ -106,7 +106,7 @@ public class WeekCardService {
         verifyUserAuthorizationForWeekCard(weekCardId);
         WeekCard weekCard = findById(weekCardId);
         for (Long taskId : weekCard.getWeekTasksIds()) {
-            taskService.deleteTaskById(taskId);
+            taskService.deleteById(taskId);
         }
         weekCardRepository.deleteById(weekCardId);
         return weekCard;
@@ -116,7 +116,7 @@ public class WeekCardService {
         List<WeekCard> weekCards = findByUserId(userId);
         for (WeekCard weekCard : weekCards) {
             for (Long taskId : weekCard.getWeekTasksIds()) {
-                taskService.deleteTaskById(taskId);
+                taskService.deleteById(taskId);
             }
             weekCardRepository.delete(weekCard);
         }
