@@ -89,7 +89,7 @@ public class UserService {
         User user = findById(userId);
         authenticationService.verifyUserAuthentication(user);
         weekCardService.deleteAllWeekCardByUserId(userId);
-        goalService.deleteAllGoalByUserId(userId);
+        goalService.deleteByUserId(userId);
         userRepository.deleteById(userId);
         return user;
     }

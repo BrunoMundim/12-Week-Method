@@ -56,7 +56,7 @@ public class Goal {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "goal_id")
-    private List<KeyResult> keyResults = new ArrayList<>();
+    private List<KeyResult> keyResults;
 
     public Goal(GoalDTO goalDTO, Long userId) {
         this.userId = userId;
@@ -67,6 +67,7 @@ public class Goal {
         this.completionDate = null;
         this.status = StatusType.NOT_STARTED;
         this.progressPercentage = 0.0;
+        this.keyResults = new ArrayList<>();
         for (int i = 0; i < goalDTO.keyResultsDescription().size(); i++) {
             keyResults.add(new KeyResult(goalDTO.keyResultsDescription().get(i)));
         }

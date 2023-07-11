@@ -50,24 +50,24 @@ public class GoalService {
         return goalRepository.save(new Goal(goalDTO, user.getId()));
     }
 
-    public Goal findGoalById(Long goalId) {
+    public Goal findById(Long goalId) {
         verifyUserAuthorizationForGoal(goalId);
         return goalRepository.findById(goalId)
                 .orElseThrow(() -> new BadRequestException(GOAL_NOT_FOUND_BY_ID.params(goalId.toString()).getMessage()));
     }
 
-    public List<Goal> findGoalsFromLoggedUser() {
-        User user = authenticationService.findUserByBearer();
-        return goalRepository.findGoalsByUserId(user.getId());
-    }
-
-    public List<Goal> findGoalsByUserId(Long userId) {
+    public List<Goal> findByUserId(Long userId) {
         verifyUserAuthorizationByUserId(userId);
         return goalRepository.findGoalsByUserId(userId);
     }
 
+    public List<Goal> findFromLoggedUser() {
+        User user = authenticationService.findUserByBearer();
+        return goalRepository.findGoalsByUserId(user.getId());
+    }
+
     public Goal updateGoal(Long goalId, UpdateGoalDTO dto) {
-        Goal goal = findGoalById(goalId);
+        Goal goal = findById(goalId);
         if (dto.title() != null) goal.setTitle(dto.title());
         if (dto.description() != null) goal.setDescription(dto.description());
         if (dto.keyResultsDescription() != null) {
@@ -78,21 +78,22 @@ public class GoalService {
         return goalRepository.save(goal);
     }
 
-    public Goal deleteGoalById(Long goalId) {
-        Goal goal = findGoalById(goalId);
+    public Goal deleteById(Long goalId) {
+        Goal goal = findById(goalId);
         goalRepository.deleteById(goalId);
         return goal;
     }
 
-    public void deleteAllGoalByUserId(Long userId){
-        List<Goal> goals = findGoalsByUserId(userId);
+    public List<Goal> deleteByUserId(Long userId){
+        List<Goal> goals = findByUserId(userId);
         for(Goal goal:goals) {
             goalRepository.delete(goal);
         }
+        return goals;
     }
 
     public Goal inProgressGoal(Long goalId) {
-        Goal goal = findGoalById(goalId);
+        Goal goal = findById(goalId);
         goal.setStatus(Goal.StatusType.IN_PROGRESS);
         goal.setStartDate(LocalDate.now());
         goal.setEndDate(LocalDate.now().plusMonths(3));
@@ -100,14 +101,14 @@ public class GoalService {
     }
 
     public Goal completeGoal(Long goalId) {
-        Goal goal = findGoalById(goalId);
+        Goal goal = findById(goalId);
         goal.setStatus(Goal.StatusType.COMPLETED);
         goal.setCompletionDate(LocalDate.now());
         return goalRepository.save(goal);
     }
 
     public Goal completeKeyResult(Long goalId, Long keyResultId) {
-        Goal goal = findGoalById(goalId);
+        Goal goal = findById(goalId);
         verifyGoalContainsKeyResult(goalId, keyResultId);
         verifyGoalInProgress(goalId);
         changeCompletionStatusKeyResult(keyResultId, true);
@@ -120,7 +121,7 @@ public class GoalService {
     }
 
     public Goal uncompleteKeyResult(Long goalId, Long keyResultId) {
-        Goal goal = findGoalById(goalId);
+        Goal goal = findById(goalId);
         verifyGoalContainsKeyResult(goalId, keyResultId);
         verifyGoalInProgress(goalId);
 
@@ -137,7 +138,7 @@ public class GoalService {
     }
 
     public void sendEmailKeyResult(Long goalId, Long keyResultId) {
-        Goal goal = findGoalById(goalId);
+        Goal goal = findById(goalId);
         KeyResult keyResult = findKeyResultById(keyResultId);
         User user = userService.findById(goal.getUserId());
         mailService.sendEmailWithTemplate(("Completed Key Result"), "CompletedKeyResult.html", keyResult);
@@ -160,7 +161,7 @@ public class GoalService {
     }
 
     private void verifyGoalContainsKeyResult(Long goalId, Long keyResultId) {
-        Goal goal = findGoalById(goalId);
+        Goal goal = findById(goalId);
         KeyResult keyResult = findKeyResultById(keyResultId);
         if (!goal.getKeyResults().contains(keyResult))
             throw new BadRequestException(
@@ -169,7 +170,7 @@ public class GoalService {
     }
 
     private void verifyGoalInProgress(Long goalId) {
-        Goal goal = findGoalById(goalId);
+        Goal goal = findById(goalId);
         if(goal.getStatus() != Goal.StatusType.IN_PROGRESS)
             throw new BadRequestException(GOAL_NOT_IN_PROGRESS.params(goalId.toString()).getMessage());
     }

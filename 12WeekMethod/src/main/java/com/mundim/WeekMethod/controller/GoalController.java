@@ -3,7 +3,6 @@ package com.mundim.WeekMethod.controller;
 import com.mundim.WeekMethod.dto.GoalDTO;
 import com.mundim.WeekMethod.dto.update.UpdateGoalDTO;
 import com.mundim.WeekMethod.entity.Goal;
-import com.mundim.WeekMethod.entity.KeyResult;
 import com.mundim.WeekMethod.service.GoalService;
 import com.mundim.WeekMethod.service.MailService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,19 +37,19 @@ public class GoalController {
     @GetMapping
     @Operation(tags = "Goal", summary = "Find a goal by ID")
     public ResponseEntity<Goal> findGoalById(@RequestParam Long goalId) {
-        return ResponseEntity.ok(goalService.findGoalById(goalId));
+        return ResponseEntity.ok(goalService.findById(goalId));
     }
 
     @GetMapping("/find-all-by-id")
     @Operation(tags = "Goal", summary = "Find all goal from user id")
     public ResponseEntity<List<Goal>> findGoalsFromLoggedUser(Long userId) {
-        return ResponseEntity.ok(goalService.findGoalsByUserId(userId));
+        return ResponseEntity.ok(goalService.findByUserId(userId));
     }
 
     @GetMapping("/find-all-logged-user")
     @Operation(tags = "Goal", summary = "Find all goal from logged user")
     public ResponseEntity<List<Goal>> findGoalsFromLoggedUser() {
-        return ResponseEntity.ok(goalService.findGoalsFromLoggedUser());
+        return ResponseEntity.ok(goalService.findFromLoggedUser());
     }
 
     @PutMapping
@@ -87,7 +86,7 @@ public class GoalController {
     @DeleteMapping
     @Operation(tags = "Goal", summary = "Delete a goal by ID")
     public ResponseEntity<Goal> deleteGoalById(@RequestParam Long goalId) {
-        return ResponseEntity.ok(goalService.deleteGoalById(goalId));
+        return ResponseEntity.ok(goalService.deleteById(goalId));
     }
 
 }

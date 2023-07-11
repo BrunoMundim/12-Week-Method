@@ -3,8 +3,6 @@ package com.mundim.WeekMethod.service;
 import com.mundim.WeekMethod.dto.WeekCardDTO;
 import com.mundim.WeekMethod.dto.update.UpdateWeekCardDTO;
 import com.mundim.WeekMethod.entity.Goal;
-import com.mundim.WeekMethod.entity.Task;
-import com.mundim.WeekMethod.entity.User;
 import com.mundim.WeekMethod.entity.WeekCard;
 import com.mundim.WeekMethod.exception.BadRequestException;
 import com.mundim.WeekMethod.exception.NullFieldException;
@@ -48,13 +46,13 @@ public class WeekCardService {
     }
 
     public List<WeekCard> findWeekCardsByGoalId(Long goalId) {
-        Goal goal = goalService.findGoalById(goalId); // Verify authorization
+        Goal goal = goalService.findById(goalId); // Verify authorization
         return weekCardRepository.findWeekCardsByGoalId(goalId);
     }
 
     public List<WeekCard> findWeekCardsForLoggedUser() {
         Long userId = authenticationService.findUserByBearer().getId();
-        List<Goal> goals = goalService.findGoalsByUserId(userId);
+        List<Goal> goals = goalService.findByUserId(userId);
         List<WeekCard> weekCards = new ArrayList<>();
         for(Goal goal:goals)
             weekCards.addAll(findWeekCardsByGoalId(goal.getId()));
@@ -62,7 +60,7 @@ public class WeekCardService {
     }
 
     public List<WeekCard> findWeekCardsByUserId(Long userId) {
-        List<Goal> goals = goalService.findGoalsByUserId(userId);
+        List<Goal> goals = goalService.findByUserId(userId);
         List<WeekCard> weekCards = new ArrayList<>();
         for(Goal goal:goals)
             weekCards.addAll(findWeekCardsByGoalId(goal.getId()));
