@@ -42,7 +42,7 @@ public class GoalController {
 
     @GetMapping("/find-all-by-id")
     @Operation(tags = "Goal", summary = "Find all goal from user id")
-    public ResponseEntity<List<Goal>> findGoalsFromLoggedUser(Long userId) {
+    public ResponseEntity<List<Goal>> findGoalsByUserId(Long userId) {
         return ResponseEntity.ok(goalService.findByUserId(userId));
     }
 

@@ -7,6 +7,7 @@ import com.mundim.WeekMethod.exception.NullFieldException;
 import com.mundim.WeekMethod.repository.UserRepository;
 import com.mundim.WeekMethod.security.AuthenticationService;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -48,7 +49,7 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    @BeforeAll
+    @BeforeEach
     public static void setup() {
         user = User.builder()
                 .id(userId).name("name").email(userEmail).password(validPassword)

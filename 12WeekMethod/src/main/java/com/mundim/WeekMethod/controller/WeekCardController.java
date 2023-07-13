@@ -14,8 +14,6 @@ import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
-// TODO Criar WeekCardView para mostrar datas corretamente
-
 @RestController
 @RequestMapping("/weekcards")
 @SecurityRequirement(name = "jwt")
@@ -42,7 +40,7 @@ public class WeekCardController {
 
     @GetMapping
     @Operation(tags = "Week Card", summary = "Get Week Cards by logged user")
-    public ResponseEntity<List<WeekCard>> findWeekCardsByToken() {
+    public ResponseEntity<List<WeekCard>> findWeekCardsForLoggedUser() {
         return ResponseEntity.ok(weekCardService.findForLoggedUser());
     }
 
