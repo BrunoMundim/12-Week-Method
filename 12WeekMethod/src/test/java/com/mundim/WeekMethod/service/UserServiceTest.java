@@ -50,7 +50,7 @@ public class UserServiceTest {
     private UserService userService;
 
     @BeforeEach
-    public static void setup() {
+    public void setup() {
         user = User.builder()
                 .id(userId).name("name").email(userEmail).password(validPassword)
                 .registrationDate(LocalDate.now()).role("ROLE_USER").build();
