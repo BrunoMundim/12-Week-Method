@@ -13,18 +13,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @SecurityScheme(name = "jwt", scheme = "bearer", type = SecuritySchemeType.HTTP, in = SecuritySchemeIn.HEADER)
 @OpenAPIDefinition(
-		info = @Info(
-				title = "12 Week Method API",
-				version = "1.0.0",
-				description = "Bem-vindo à documentação da API do Goal Sprinter! Esta documentação fornece informações detalhadas sobre os endpoints, parâmetros, solicitações e respostas da API para ajudá-lo a integrar e utilizar os recursos do 12 Week Method em seu aplicativo.",
-				license = @License(name = "MIT License"),
-				contact = @Contact(name = "Bruno Mundim", email = "brunomundimfranco@gmail.com")
-		)
+        info = @Info(
+                title = "12 Week Method API",
+                version = "1.0.0",
+                description = "Bem-vindo à documentação da API do Goal Sprinter! Esta documentação fornece informações detalhadas sobre os endpoints, parâmetros, solicitações e respostas da API para ajudá-lo a integrar e utilizar os recursos do 12 Week Method em seu aplicativo.",
+                license = @License(name = "MIT License"),
+                contact = @Contact(name = "Bruno Mundim", email = "brunomundimfranco@gmail.com")
+        )
 )
 public class Application {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
 
 }
