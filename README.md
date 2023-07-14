@@ -7,21 +7,22 @@ https://12-week-method.up.railway.app/
 
 O projeto utiliza um banco de dados PostgreSQL. Para executar localmente, siga as etapas abaixo:
 
-1. Abra o arquivo de configuração: **"12WeekMethod\src\main\resources\application-dev.properties"**.
+1. Abra o arquivo de configuração: **"12WeekMethod\src\main\resources\application.properties"**.
 
-2. Modifique as seguintes configurações com as informações do seu banco de dados PostgreSQL:
-   - Usuário PostgreSQL
-   - Senha PostgreSQL
+2. Crie uma base de dados no PostgreSQL com o nome **12-week-method**.
+
+3. Modifique as seguintes configurações com as informações do seu banco de dados PostgreSQL:
+   - ${DB_NAME}: Nome Banco de Dados PostgreSQL (12-week-method)
+   - ${DB_USERNAME}: Usuário PostgreSQL
+   - ${DB_PASSWORD}: Senha PostgreSQL
      
 ```
 ## Conexão com o banco de dados
 spring.datasource.driver-class-name=org.postgresql.Driver
-spring.datasource.url=jdbc:postgresql://localhost:5432/12-week-method
-spring.datasource.username= Seu Usuário
-spring.datasource.password= Sua Senha
+spring.datasource.url=jdbc:postgresql://localhost:5432/${DB_NAME}
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
 ```
-
-3. Crie uma base de dados no PostgreSQL com o nome **12-week-method**.
 
 4. No terminal, execute o seguinte comando para construir o projeto:
 
