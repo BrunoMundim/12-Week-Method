@@ -35,6 +35,7 @@ public class UserController {
     }
 
     @GetMapping("/find-all")
+    @RolesAllowed("ADMIN")
     @Operation(tags = "User", summary = "Find all users (ADMIN ONLY)")
     public ResponseEntity<List<UserView>> getAllUsers() {
         List<User> users = userService.findAll();

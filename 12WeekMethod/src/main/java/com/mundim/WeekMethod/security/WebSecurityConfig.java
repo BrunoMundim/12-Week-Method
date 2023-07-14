@@ -50,7 +50,6 @@ public class WebSecurityConfig {
                 .antMatchers(AUTH_WHITELIST).permitAll()
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
-                .antMatchers(HttpMethod.GET, "/users/find-all").permitAll()
                 .antMatchers(HttpMethod.GET, "/users/find-all").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and().addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
