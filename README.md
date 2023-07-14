@@ -1,19 +1,24 @@
 # 12-Week-Method
 
+## Link de acesso API:
+https://12-week-method.up.railway.app/
+
 ## Como Rodar
 
 O projeto utiliza um banco de dados PostgreSQL. Para executar localmente, siga as etapas abaixo:
 
-1. Abra o arquivo de configuração: **"12WeekMethod\src\main\resources\application.properties"**.
+1. Abra o arquivo de configuração: **"12WeekMethod\src\main\resources\application-dev.properties"**.
 
 2. Modifique as seguintes configurações com as informações do seu banco de dados PostgreSQL:
-
+   - Usuário PostgreSQL
+   - Senha PostgreSQL
+     
 ```
 ## Conexão com o banco de dados
 spring.datasource.driver-class-name=org.postgresql.Driver
 spring.datasource.url=jdbc:postgresql://localhost:5432/12-week-method
-spring.datasource.username=Seu Usuário
-spring.datasource.password=Sua Senha
+spring.datasource.username= Seu Usuário
+spring.datasource.password= Sua Senha
 ```
 
 3. Crie uma base de dados no PostgreSQL com o nome **12-week-method**.
@@ -21,10 +26,12 @@ spring.datasource.password=Sua Senha
 4. No terminal, execute o seguinte comando para construir o projeto:
 
 ```bash
-./gradlew build
+mvn clean install
+
+mvn spring-boot:run
 ```
 
-Após a conclusão do comando acima, você estará pronto para executar a aplicação localmente.
+Parabéns a aplicação subiu localmente na porta 8080.
 
 ## Descrição da API
 
