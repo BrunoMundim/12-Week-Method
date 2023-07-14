@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -19,7 +20,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
                 description = "Bem-vindo à documentação da API do Goal Sprinter! Esta documentação fornece informações detalhadas sobre os endpoints, parâmetros, solicitações e respostas da API para ajudá-lo a integrar e utilizar os recursos do 12 Week Method em seu aplicativo.",
                 license = @License(name = "MIT License"),
                 contact = @Contact(name = "Bruno Mundim", email = "brunomundimfranco@gmail.com")
-        )
+        ),
+        servers = {@Server(url = "/", description = "Default Server URL")}
 )
 public class Application {
 
