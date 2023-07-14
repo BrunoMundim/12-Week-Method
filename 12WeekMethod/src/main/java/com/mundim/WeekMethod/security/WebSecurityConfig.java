@@ -44,7 +44,7 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf().disable()
+        return http.cors().and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(STATELESS)
                 .and().authorizeHttpRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
